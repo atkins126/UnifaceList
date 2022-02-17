@@ -25,7 +25,7 @@ type
     Constructor Create(const aUnifaceList:String);overload;
     Constructor Create(const aKey,aUnifaceList:String);overload;
 
-    procedure SplitNameAndValue(const aText:String);
+    //procedure SplitNameAndValue(const aText:String);
 	end;
 
 

@@ -3,7 +3,9 @@ program UnifaceListTest;
 uses
   Vcl.Forms,
   Unit1 in 'Unit1.pas' {Form1},
-  UnifaceList in 'UnifaceList.pas';
+  UnifaceList in 'UnifaceList.pas',
+  UnifaceKeyValuePair in 'UnifaceKeyValuePair.pas',
+  UnifaceListCommon in 'UnifaceListCommon.pas';
 
 {$R *.res}
 
