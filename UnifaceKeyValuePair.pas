@@ -29,7 +29,7 @@ Constructor TUnifaceKeyValuePair.Create(const aValue: string);
 var firstMatch:TMatch;
     offset:Integer;
 begin
-  FKey:=NO_KEY;
+  FKey:='';
   FHasKey:=false;
   FValue:='';
   firstMatch:=regEx.Match(aValue);
