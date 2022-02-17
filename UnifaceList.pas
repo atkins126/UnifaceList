@@ -10,7 +10,9 @@ type
       FItems: TList<TUnifaceList>;
       FValue: String;
       FKey: String;
-      Constructor Create(const aPair: TUnifaceKeyValuePair);overload;
+      FParent: TUnifaceList;
+      Constructor Create(const aParent:TUnifaceList; const aPair: TUnifaceKeyValuePair);overload; 
+      Constructor Create(const aParent:TUnifaceList);overload;
 
       function Split(const aPair: TUnifaceKeyValuePair; const aText:String):TUnifaceList;
       function IsValidIndex(const aIndex:Integer):Boolean;
@@ -35,6 +37,7 @@ type
       property IsList: Boolean read GetIsList;
       property IsEmpty: Boolean read GetIsEmpty;
       property UnifaceString: String read GetUnifaceString;
+      property Parent: TUnifaceList read FParent;
 
       procedure Parse(const aText: String);
       function GetItem(const aIndex: Integer):TUnifaceList;
@@ -72,6 +75,7 @@ begin
     if(FItems[i].IsEmpty)then FItems.Remove(FItems[i]);
   end;
   FItems.Clear();
+  FParent:=nil;
 end;
 
 constructor TUnifaceList.Create();
@@ -79,11 +83,18 @@ begin
 	FKey:='';
   FValue:='';
 	FItems:=TList<TUnifaceList>.Create();
+  FParent:=nil;
 end;
 
-constructor TUnifaceList.Create(const aPair: TUnifaceKeyValuePair);
+constructor TUnifaceList.Create(const aParent:TUnifaceList);
 begin
   Create();
+  FParent:=aParent;
+end;
+
+constructor TUnifaceList.Create(const aParent:TUnifaceList; const aPair: TUnifaceKeyValuePair);
+begin
+  Create(aParent);
   FValue:=aPair.Value;
   if(aPair.HasKey)then
   begin
@@ -107,7 +118,7 @@ begin
     end
     else
     begin
-      FItems.Add(TUnifaceList.Create(pair));
+      FItems.Add(TUnifaceList.Create(self, pair));
     end;
   end;
 end;
@@ -117,7 +128,7 @@ var parts: TArray<String>;
     part, partItem: String;
     item:TUnifaceList;
 begin
-  Result:=TUnifaceList.Create();
+  Result:=TUnifaceList.Create(self);
   if(aPair.HasKey)then
   begin
     result.FKey:=aPair.Key;
@@ -127,7 +138,7 @@ begin
   for part in parts do
   begin
     partItem:=regExReplace.Replace(part, GOLD_SEMICOLON);
-    item:=TUnifaceList.Create();
+    item:=TUnifaceList.Create(result);
     item.Parse(partItem);
     result.FItems.Add(item);
   end;
@@ -165,7 +176,7 @@ begin
   Result:=nil;
   for item in FItems do
   begin
-    if(item.Key=aId)then
+    if(Assigned(item) and (item.Key=aId))then
     begin
       Result:=item;
       break;
@@ -241,7 +252,7 @@ end;
 procedure TUnifaceList.PutItem(const aValue: String; const aIndex: Integer = 0);
 var item:TUnifaceList;
 begin
-  item:=TUnifaceList.Create();
+  item:=TUnifaceList.Create(self);
   item.Value:=aValue;
   PutItem(item,aIndex);
 end;
@@ -251,7 +262,7 @@ var aValueListItem:TUnifaceList;
 begin
   if(IsEmpty)then
   begin
-    aValueListItem:=TUnifaceList.Create();
+    aValueListItem:=TUnifaceList.Create(self);
     aValueListItem.FValue:=FValue;
     aValueListItem.FKey:=FKey;
     FValue:='';
@@ -264,8 +275,9 @@ end;
 procedure TUnifaceList.PutItemID(const aId: String; const aValue: String);
   var item:TUnifaceList;
 begin
-  item:=TUnifaceList.Create();
-  item.Value:=IdValueString(aId, aValue);
+  item:=TUnifaceList.Create(self);
+  item.Value:=aValue;
+  item.FKey:=aId;
   PutItemId(aId,item);
 end;
 
@@ -277,11 +289,11 @@ begin
   if(Assigned(item))then
   begin
     index:=FItems.IndexOf(item);
-    FItems[index]:=item;
+    FItems[index]:=aItem;
   end
   else
   begin
-    FItems.Add(item);
+    FItems.Add(aItem);
   end;
 end;
 
