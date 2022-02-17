@@ -21,10 +21,6 @@ object Form1: TForm1
     Align = alClient
     ItemHeight = 13
     TabOrder = 0
-    ExplicitLeft = 232
-    ExplicitTop = 304
-    ExplicitWidth = 121
-    ExplicitHeight = 97
   end
   object Panel1: TPanel
     Left = 0
@@ -36,7 +32,6 @@ object Form1: TForm1
     Caption = 'Panel1'
     ShowCaption = False
     TabOrder = 1
-    ExplicitTop = -6
     object Button1: TButton
       Left = 487
       Top = 98
@@ -75,5 +70,33 @@ object Form1: TForm1
       Enabled = False
       TabOrder = 3
     end
+    object CheckBox2: TCheckBox
+      Left = 285
+      Top = 67
+      Width = 17
+      Height = 17
+      TabOrder = 4
+      OnClick = CheckBox2Click
+    end
+    object LabeledEdit3: TLabeledEdit
+      Left = 158
+      Top = 65
+      Width = 121
+      Height = 21
+      EditLabel.Width = 38
+      EditLabel.Height = 13
+      EditLabel.Caption = 'PutItem'
+      Enabled = False
+      TabOrder = 5
+    end
+  end
+  object Button2: TButton
+    Left = 406
+    Top = 98
+    Width = 75
+    Height = 25
+    Caption = 'Clear'
+    TabOrder = 2
+    OnClick = Button2Click
   end
 end

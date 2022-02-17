@@ -13,6 +13,7 @@ const RECORD_SEPARATOR=#30;
 function JoinStrings(const aStrings: TStringList; aDelimiter: String): String;
 function GoldToReadable(const aText: String):String;
 function ReadableToGold(const aText: String):String;
+function IdValueString(const aId,aValue:String):String;
 
 implementation
 
@@ -52,6 +53,11 @@ begin
   Result:=aText
     .Replace(GOLD_EXCLAMATION_READABLE, GOLD_EXCLAMATION)
     .Replace(GOLD_SEMICOLON_READABLE, GOLD_SEMICOLON);
+end;
+
+function IdValueString(const aId,aValue:String):String;
+begin
+  Result:=aId+'='+aValue;
 end;
 
 initialization

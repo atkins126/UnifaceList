@@ -25,8 +25,10 @@ type
       function GetValue():String;
 
       procedure SetValue(aValue:String);
+      procedure Clear();
     public
       Constructor Create();overload;
+      Destructor Destroy();override;
 
       property Key: String read FKey;
       property Value: String read GetValue write SetValue;
@@ -37,8 +39,13 @@ type
       procedure Parse(const aText: String);
       function GetItem(const aIndex: Integer):TUnifaceList;
       function GetItemID(const aId: String): TUnifaceList;
-	end;
 
+      procedure PutItem(const aValue:String; const aIndex: Integer=0);overload;
+      procedure PutItem(const aItem: TUnifaceList; const aIndex: Integer=0);overload;
+
+      procedure PutItemID(const aId,aValue:String);overload;
+      procedure PutItemID(const aId: String; const aItem: TUnifaceList);overload;
+  end;
 
 implementation
 
@@ -47,6 +54,25 @@ uses System.RegularExpressions, UnifaceListCommon;
 var
  regExReplace: TRegEx;
  regExSplit: TRegEx;
+
+Destructor TUnifaceList.Destroy();
+begin
+  Clear();  
+  inherited;
+end;
+
+procedure TUnifaceList.Clear();
+var i:Integer;
+begin
+  FKey:='';
+  FValue:='';
+  for I := FItems.Count-1 downto 0 do
+  begin  
+    FItems[i].Clear();
+    if(FItems[i].IsEmpty)then FItems.Remove(FItems[i]);
+  end;
+  FItems.Clear();
+end;
 
 constructor TUnifaceList.Create();
 begin
@@ -119,7 +145,7 @@ end;
 
 function TUnifaceList.GetIsEmpty(): Boolean;
 begin
-  Result:=FItems.Count>0;
+  Result:=FItems.Count=0;
 end;
 
 function TUnifaceList.GetItem(const aIndex: Integer): TUnifaceList;
@@ -171,7 +197,7 @@ function TUnifaceList.GetUnifaceStringCore(const aLevel: Integer): string;
 var aValue: String;
 begin
   aValue:=GetValueCore(aLevel);
-  if(FKey<>'')then Result:=FKey+'='+aValue
+  if(FKey<>'')then Result:=IdValueString(FKey, aValue)
   else Result:=aValue;
 end;
 
@@ -211,6 +237,54 @@ procedure TUnifaceList.SetValue(aValue: String);
 begin
   Parse(aValue);
 end;
+
+procedure TUnifaceList.PutItem(const aValue: String; const aIndex: Integer = 0);
+var item:TUnifaceList;
+begin
+  item:=TUnifaceList.Create();
+  item.Value:=aValue;
+  PutItem(item,aIndex);
+end;
+
+procedure TUnifaceList.PutItem(const aItem: TUnifaceList; const aIndex: Integer = 0);
+var aValueListItem:TUnifaceList;
+begin
+  if(IsEmpty)then
+  begin
+    aValueListItem:=TUnifaceList.Create();
+    aValueListItem.FValue:=FValue;
+    aValueListItem.FKey:=FKey;
+    FValue:='';
+    FItems.Add(aValueListItem);
+  end;
+  if(aIndex>0)then FItems.Insert(aIndex-1, aItem)
+  else FItems.Add(aItem);
+end;
+
+procedure TUnifaceList.PutItemID(const aId: String; const aValue: String);
+  var item:TUnifaceList;
+begin
+  item:=TUnifaceList.Create();
+  item.Value:=IdValueString(aId, aValue);
+  PutItemId(aId,item);
+end;
+
+procedure TUnifaceList.PutItemID(const aId: String; const aItem: TUnifaceList);
+var item:TUnifaceList;
+    index:Integer;
+begin
+  item:=GetItemID(aId);
+  if(Assigned(item))then
+  begin
+    index:=FItems.IndexOf(item);
+    FItems[index]:=item;
+  end
+  else
+  begin
+    FItems.Add(item);
+  end;
+end;
+
 
 initialization
   regExReplace:= TRegEx.Create(GOLD_EXCLAMATION+GOLD_SEMICOLON, [roCompiled]);
