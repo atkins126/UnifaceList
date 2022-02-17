@@ -40,8 +40,9 @@ type
       property Parent: TUnifaceList read FParent;
 
       procedure Parse(const aText: String);
-      function GetItem(const aIndex: Integer):TUnifaceList;
+      function GetItem(const aIndex: Integer):TUnifaceList; 
       function GetItemID(const aId: String): TUnifaceList;
+      function GetLastItem():TUnifaceList;
 
       procedure PutItem(const aValue:String; const aIndex: Integer=0);overload;
       procedure PutItem(const aItem: TUnifaceList; const aIndex: Integer=0);overload;
@@ -295,8 +296,12 @@ begin
   begin
     FItems.Add(aItem);
   end;
-end;
+end;       
 
+function TUnifaceList.GetLastItem(): TUnifaceList;
+begin
+  Result:=GetItem(FItems.Count-1);
+end;
 
 initialization
   regExReplace:= TRegEx.Create(GOLD_EXCLAMATION+GOLD_SEMICOLON, [roCompiled]);

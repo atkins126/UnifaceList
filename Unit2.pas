@@ -155,7 +155,14 @@ begin
   begin
     AppendLine('Putting item on '+IntToStr(aIndex)+' with value '+aValue);
     FList.PutItem(aValue, aIndex);
-    GettedItem(FList.GetItem(aIndex));
+    if(aIndex>0)then
+    begin
+      GettedItem(FList.GetItem(aIndex));
+    end
+    else
+    begin
+      GettedItem(FList.GetLastItem());
+    end;
   end;
 end;
 
