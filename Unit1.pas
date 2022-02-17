@@ -38,7 +38,8 @@ var source, target:String;
 begin
   source:=ReadableToGold(LabeledEdit1.Text);
   list:=TUnifaceList.Create();
-  list.Parse(source);
+  //list.Parse(source);
+  list.Value:=source;
   ListBox1.Clear;
   AppendLine(LabeledEdit1.Text);
   target:=list.UnifaceString;

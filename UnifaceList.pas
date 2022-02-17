@@ -23,11 +23,13 @@ type
       function ItemsToStrings(const aLevel:Integer):TStringList;
       function GetSingleValue(const aLevel:Integer): String;
       function GetValue():String;
+
+      procedure SetValue(aValue:String);
     public
       Constructor Create();overload;
 
       property Key: String read FKey;
-      property Value: String read GetValue;
+      property Value: String read GetValue write SetValue;
       property IsList: Boolean read GetIsList;
       property IsEmpty: Boolean read GetIsEmpty;
       property UnifaceString: String read GetUnifaceString;
@@ -203,6 +205,11 @@ end;
 function TUnifaceList.GetValue():String;
 begin
   Result:=GetValueCore(0);
+end;
+
+procedure TUnifaceList.SetValue(aValue: String);
+begin
+  Parse(aValue);
 end;
 
 initialization
